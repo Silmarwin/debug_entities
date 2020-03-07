@@ -109,11 +109,42 @@ namespace DDToolKit.Controllers
 
 
         [HttpPost]
-        public ActionResult Index(String SearchName)
+        public ActionResult Index(String SearchName, float CR, string Type)
         {
-            var Res = db.Creatures.Where(p => p.Name.Contains(SearchName)).ToList();
-            ModelState.Clear();
-            return View(Res);
+            if (SearchName != null && CR == -1 && Type == "none") {
+                var Res = db.Creatures.Where(p => p.Name.Contains(SearchName)).ToList();
+                ModelState.Clear();
+                return View(Res);
+            } else if (SearchName == null && CR != -1 && Type == "none")
+            {
+                var Res = db.Creatures.Where(p => p.ChallengeRating.Equals(CR)).ToList();
+                return View(Res);
+            } else if (SearchName == null && CR == -1 && Type != "none")
+            {
+                var Res = db.Creatures.Where(p => p.Type == Type).ToList();
+                return View(Res);
+            } else if (SearchName != null && CR != -1 && Type == "none")
+            {
+                var Res = db.Creatures.Where(p => p.Name.Contains(SearchName) && p.ChallengeRating == CR).ToList();
+                return View(Res);
+            } else if (SearchName != null && CR == -1 && Type != "none")
+            {
+                var Res = db.Creatures.Where(p => p.Name.Contains(SearchName) && p.Type == Type).ToList();
+                return View(Res);
+            }else if(SearchName == null && CR != -1 && Type != "none")
+            {
+                var Res = db.Creatures.Where(p => p.ChallengeRating == CR && p.Type == Type).ToList();
+                return View(Res);
+            }else if(SearchName != null && CR != -1 && Type != "none")
+            {
+                var Res = db.Creatures.Where(p => p.Name.Contains(SearchName) && p.ChallengeRating == CR && p.Type == Type);
+                return View(Res);
+            }
+            else
+            {
+                return View(db.Creatures.ToList());
+            }
+
         }
 
 
